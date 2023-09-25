@@ -81,7 +81,7 @@ svg.selectAll(".axislabel")
 let line = d3.line()
   .x(d => d.x)
   .y(d => d.y);
-let colors = ["darkorange", "gray", "navy"];
+let colors = ["darkorange", "gray", "navy", "red"];
 
 
 function getPathCoordinates(data_point) {
@@ -94,16 +94,50 @@ function getPathCoordinates(data_point) {
   return coordinates;
 }
 
-// draw the path element
+
+function lightenColor(color) {
+  const c = d3.color(color);
+  c.opacity = 0.6; // Imposta l'opacità per il riempimento
+  return c.toString();
+}
+
+let idleOpacity = 0.2;
+
 svg.selectAll("path")
   .data(data)
   .join(
     enter => enter.append("path")
-      .datum(d => getPathCoordinates(d))
+      .datum(d => {
+        const pathCoordinates = getPathCoordinates(d);
+        // Aggiungi il punto finale uguale al punto iniziale
+        pathCoordinates.push(pathCoordinates[0]);
+        return pathCoordinates;
+      })
       .attr("d", line)
-      .attr("stroke-width", 3)
+      .attr("stroke-width", 4)
       .attr("stroke", (_, i) => colors[i])
-      .attr("fill", (_, i) => colors[i])
+      .attr("fill", "none")
       .attr("stroke-opacity", 1)
-      .attr("opacity", 0.5)
+      .attr("opacity", idleOpacity)
+      .on("click", function (_, i) {
+        svg.selectAll("path")
+          .attr("fill", "none")
+          .attr("stroke-opacity", 1)
+          .attr("opacity", idleOpacity);
+        const clickedPath = d3.select(this);
+
+        d3.select(this)
+          .transition()
+          .duration(300)
+          .attr("fill", lightenColor(clickedPath.attr("stroke")))
+          .attr("stroke-opacity", 1)
+          .attr("opacity", 1);
+      })
   );
+
+
+
+
+
+
+
