@@ -1,7 +1,7 @@
 import data from '../data.json' assert { type: 'json' };
 
 
-let width = 1000;
+let width = 1200;
 let height = 650;
 let idleOpacity = 0.5;
 let idleWidth = 4;
@@ -58,7 +58,7 @@ function on_click(_, i) {
 
   d3.select(this)
     .transition()
-    .duration(300)
+    .duration(400)
     .attr("fill", lighterColor(clickedPath.attr("stroke")))
     .attr("stroke-opacity", 1)
     .attr("opacity", 1)
@@ -136,15 +136,42 @@ svg.selectAll("line")
   );
 
 
-// draw axis label
+// Funzione per calcolare la posizione x in base alla posizione della feature
+function calculateXPosition(d, i) {
+  if (i == 0)
+    return d.line_coord.x - 25
+  else if (i == 1)
+    return d.line_coord.x - 90
+  else if (i == 2)
+    return d.line_coord.x - 40
+  else if (i == 4)
+    return d.line_coord.x + 11
+  return d.line_coord.x
+}
+
+// Funzione per calcolare la posizione y in base alla posizione della feature
+function calculateYPosition(d, i) {
+  if (i == 0)
+    return d.line_coord.y - 27
+  else if (i == 1)
+    return d.line_coord.y - 5
+  else if (i == 2)
+    return d.line_coord.y + 20
+  else if (i == 3)
+    return d.line_coord.y + 20
+  return d.line_coord.y;
+}
+
 svg.selectAll(".axislabel")
   .data(featureData)
   .join(
     enter => enter.append("text")
-      .attr("x", d => d.label_coord.x - 15)
-      .attr("y", d => d.label_coord.y - 15)
+      .attr("x", calculateXPosition)
+      .attr("y", calculateYPosition)
       .text(d => d.name)
+      .attr("id", d => d.name)
   );
+
 
 let line = d3.line()
   .x(d => d.x)
