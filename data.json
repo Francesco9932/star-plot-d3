@@ -1,30 +1,82 @@
 [
   {
-    "A": 3.6422900371646225,
-    "B": 2.7428770254010217,
-    "C": 4.240897197237841,
-    "D": 3.2476950571580137,
-    "E": 5.712265694783209
+    "strength": 95,
+    "intelligence": 80,
+    "speed": 85,
+    "agility": 75,
+    "endurance": 90,
+    "name": "Thor"
   },
   {
-    "A": 5.6422900371646225,
-    "B": 3.7428770254010217,
-    "C": 5.240897197237841,
-    "D": 3.2476950571580137,
-    "E": 2.712265694783209
+    "strength": 40,
+    "intelligence": 100,
+    "speed": 60,
+    "agility": 70,
+    "endurance": 75,
+    "name": "Doctor Strange"
   },
   {
-    "A": 9.6422900371646225,
-    "B": 8.7428770254010217,
-    "C": 1.240897197237841,
-    "D": 2.2476950571580137,
-    "E": 3.712265694783209
+    "strength": 70,
+    "intelligence": 95,
+    "speed": 80,
+    "agility": 65,
+    "endurance": 85,
+    "name": "Iron Man"
   },
   {
-    "A": 1.6422900371646225,
-    "B": 4.7428770254010217,
-    "C": 5.240897197237841,
-    "D": 5.2476950571580137,
-    "E": 8.712265694783209
+    "strength": 85,
+    "intelligence": 70,
+    "speed": 75,
+    "agility": 90,
+    "endurance": 95,
+    "name": "Captain America"
+  },
+  {
+    "strength": 100,
+    "intelligence": 50,
+    "speed": 40,
+    "agility": 55,
+    "endurance": 98,
+    "name": "Hulk"
+  },
+  {
+    "strength": 70,
+    "intelligence": 80,
+    "speed": 90,
+    "agility": 95,
+    "endurance": 75,
+    "name": "Spider-Man"
+  },
+  {
+    "strength": 60,
+    "intelligence": 75,
+    "speed": 85,
+    "agility": 90,
+    "endurance": 70,
+    "name": "Black Widow"
+  },
+  {
+    "strength": 45,
+    "intelligence": 90,
+    "speed": 70,
+    "agility": 75,
+    "endurance": 80,
+    "name": "Scarlet Witch"
+  },
+  {
+    "strength": 75,
+    "intelligence": 85,
+    "speed": 90,
+    "agility": 95,
+    "endurance": 80,
+    "name": "Black Panther"
+  },
+  {
+    "strength": 55,
+    "intelligence": 70,
+    "speed": 80,
+    "agility": 75,
+    "endurance": 60,
+    "name": "Ant-Man"
   }
 ]
