@@ -1,13 +1,16 @@
 import data from '../data.json' assert { type: 'json' };
 
-let idleOpacity = 0.5;
+
 let width = 1000;
-let height = 700;
+let height = 650;
+let idleOpacity = 0.5;
+let idleWidth = 4;
+let pointRadius = 5;
 
 let names = data.map(d => d.name); // like ["Thor", "IronMan", "Hulk", ...]
 // removing the name from the object
-data.forEach(function (oggetto) {
-  delete oggetto.name;
+data.forEach(function (d) {
+  delete d.name;
 });
 let variables = Object.keys(data[0]);  // like ["strength", "intelligence", "speed", ...]
 
@@ -48,6 +51,7 @@ function on_click(_, i) {
   svg.selectAll("path")
     .attr("fill", "none")
     .attr("stroke-opacity", 1)
+    .attr("stroke-width", idleWidth)
     .attr("opacity", idleOpacity);
 
   const clickedPath = d3.select(this);
@@ -58,7 +62,7 @@ function on_click(_, i) {
     .attr("fill", lighterColor(clickedPath.attr("stroke")))
     .attr("stroke-opacity", 1)
     .attr("opacity", 1)
-    .attr("stroke-width", 5);
+    .attr("stroke-width", idleWidth + 2);
 }
 
 // 5: Calculate the coordinates of a point on the circumference of a circle
@@ -163,7 +167,7 @@ svg.selectAll("path")
         return pathCoordinates;
       })
       .attr("d", line)
-      .attr("stroke-width", 4)
+      .attr("stroke-width", idleWidth)
       .attr("stroke", function (d) { return colors(d) })
       .attr("fill", "none")
       .attr("stroke-opacity", 1)
@@ -171,9 +175,25 @@ svg.selectAll("path")
       .on("click", on_click)
   );
 
+// create a dot for each data point in the path
+svg.selectAll("myCircles")
+  .data(data)
+  .join(
+    enter => enter.append("g")
+      .attr("class", "circle-group")
+      .attr("fill", function (d) { return colors(d) })
+      .selectAll("circle")
+      .data(d => getPathCoordinates(d))
+      .join(
+        enter => enter.append("circle")
+          .attr("cx", d => d.x)
+          .attr("cy", d => d.y)
+          .attr("r", pointRadius)
+      )
+  );
 
 // legend - Dots
-svg.selectAll("mydots")
+svg.selectAll(".mydots")
   .data(names)
   .enter()
   .append("circle")
@@ -181,6 +201,7 @@ svg.selectAll("mydots")
   .attr("cy", function (d, i) { return 100 + i * 25 }) // 100 is where the first dot appears. 25 is the distance between dots
   .attr("r", 7)
   .style("fill", function (d) { return colors(d) })
+//.attr("id", function (d) { return d });
 
 
 // legend - Labels

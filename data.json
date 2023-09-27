@@ -36,11 +36,11 @@
     "intelligence": 50,
     "speed": 40,
     "agility": 55,
-    "endurance": 98,
+    "endurance": 100,
     "name": "Hulk"
   },
   {
-    "strength": 70,
+    "strength": 65,
     "intelligence": 80,
     "speed": 90,
     "agility": 95,
@@ -66,9 +66,9 @@
   {
     "strength": 75,
     "intelligence": 85,
-    "speed": 90,
-    "agility": 95,
-    "endurance": 80,
+    "speed": 80,
+    "agility": 100,
+    "endurance": 70,
     "name": "Black Panther"
   },
   {
