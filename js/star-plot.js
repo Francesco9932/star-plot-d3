@@ -1,24 +1,19 @@
-// read from json
 import data from '../data.json' assert { type: 'json' };
-
-
-let variables = data.map(d => d.name); // like ["Thor", "IronMan", "Hulk", ...]
-// removing the name from the object
-data.forEach(function (oggetto) {
-  delete oggetto.name;
-});
-let features = Object.keys(data[0]);  // like ["strength", "intelligence", "speed", ...]
-
 
 let idleOpacity = 0.5;
 let width = 1000;
 let height = 700;
-let svg = d3.select("body").append("svg")
-  .attr("width", width)
-  .attr("height", height)
-  .attr("class", "svg-style");
 
-// Calculate the domain for the radialScale based on the data
+let names = data.map(d => d.name); // like ["Thor", "IronMan", "Hulk", ...]
+// removing the name from the object
+data.forEach(function (oggetto) {
+  delete oggetto.name;
+});
+let variables = Object.keys(data[0]);  // like ["strength", "intelligence", "speed", ...]
+
+// Accessor functions
+
+// 1: Calculate the domain for the radialScale based on the data
 const maxStatValue = Math.max(
   ...data.map(item =>
     Math.max(item.strength, item.intelligence, item.speed, item.agility, item.endurance)
@@ -30,24 +25,25 @@ const minStatValue = Math.min(
   )
 );
 
-
+// 2: Calculate the coordinates for each path
 function getPathCoordinates(data_point) {
   let coordinates = [];
-  for (var i = 0; i < features.length; i++) {
-    let ft_name = features[i];
-    let angle = (Math.PI / 2) + (2 * Math.PI * i / features.length);
+  for (var i = 0; i < variables.length; i++) {
+    let ft_name = variables[i];
+    let angle = (Math.PI / 2) + (2 * Math.PI * i / variables.length);
     coordinates.push(angleToCoordinate(angle, data_point[ft_name]));
   }
   return coordinates;
 }
 
-function lightenColor(color) {
+// 3: Get lighter color from a given color
+function lighterColor(color) {
   const c = d3.color(color);
-  c.opacity = 0.6;
+  c.opacity = c.opacity - .4;
   return c.toString();
 }
 
-
+// 4: left on click function star-plot
 function on_click(_, i) {
   svg.selectAll("path")
     .attr("fill", "none")
@@ -59,13 +55,25 @@ function on_click(_, i) {
   d3.select(this)
     .transition()
     .duration(300)
-    .attr("fill", lightenColor(clickedPath.attr("stroke")))
+    .attr("fill", lighterColor(clickedPath.attr("stroke")))
     .attr("stroke-opacity", 1)
     .attr("opacity", 1)
     .attr("stroke-width", 5);
 }
 
+// 5: Calculate the coordinates of a point on the circumference of a circle
+function angleToCoordinate(angle, value) {
+  let x = Math.cos(angle) * radialScale(value);
+  let y = Math.sin(angle) * radialScale(value);
+  return { "x": width / 2 + x, "y": height / 2 - y };
+}
 
+let svg = d3.select("body").append("svg")
+  .attr("width", width)
+  .attr("height", height)
+  .attr("class", "svg-style");
+
+// scale used to map the values to the radius  
 const radialScale = d3.scaleLinear()
   .domain([minStatValue, maxStatValue]) // Set the domain based on the maximum value in the data
   .range([0, 280]);
@@ -101,15 +109,8 @@ svg.selectAll(".ticklabel")
   );
 
 
-function angleToCoordinate(angle, value) {
-  let x = Math.cos(angle) * radialScale(value);
-  let y = Math.sin(angle) * radialScale(value);
-  return { "x": width / 2 + x, "y": height / 2 - y };
-}
-
-
-let featureData = features.map((f, i) => {
-  let angle = (Math.PI / 2) + (2 * Math.PI * i / features.length);
+let featureData = variables.map((f, i) => {
+  let angle = (Math.PI / 2) + (2 * Math.PI * i / variables.length);
   return {
     "name": f,
     "angle": angle,
@@ -145,9 +146,9 @@ let line = d3.line()
   .x(d => d.x)
   .y(d => d.y);
 
-// usually you have a color scale in your chart already
+// scale used to map the name of the data case to a color
 var colors = d3.scaleOrdinal()
-  .domain(variables)
+  .domain(names)
   .range(d3.schemeTableau10);
 
 // Create the paths
@@ -173,7 +174,7 @@ svg.selectAll("path")
 
 // legend - Dots
 svg.selectAll("mydots")
-  .data(variables)
+  .data(names)
   .enter()
   .append("circle")
   .attr("cx", 100)
@@ -184,7 +185,7 @@ svg.selectAll("mydots")
 
 // legend - Labels
 svg.selectAll("mylabels")
-  .data(variables)
+  .data(names)
   .enter()
   .append("text")
   .attr("x", 120)
