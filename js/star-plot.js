@@ -47,22 +47,33 @@ function lighterColor(color) {
 }
 
 // 4: left on click function star-plot
-function on_click(_, i) {
-  svg.selectAll("path")
+function on_click(event, d) {
+  const g = svg.selectAll("g");
+
+  g.selectAll("path")
     .attr("fill", "none")
     .attr("stroke-opacity", 1)
     .attr("stroke-width", idleWidth)
     .attr("opacity", idleOpacity);
 
-  const clickedPath = d3.select(this);
+  g.selectAll("circle")
+    .attr("r", pointRadius);
 
-  d3.select(this)
+  const clickedGroup = d3.select(this.parentNode);
+
+  const clickedPath = clickedGroup.selectAll("path");
+  clickedPath
     .transition()
     .duration(400)
     .attr("fill", lighterColor(clickedPath.attr("stroke")))
     .attr("stroke-opacity", 1)
     .attr("opacity", 1)
     .attr("stroke-width", idleWidth + 2);
+
+  clickedGroup.selectAll("circle")
+    .transition()
+    .duration(400)
+    .attr("r", pointRadius + 4);
 }
 
 // 5: Calculate the coordinates of a point on the circumference of a circle
@@ -182,42 +193,42 @@ var colors = d3.scaleOrdinal()
   .domain(names)
   .range(d3.schemeTableau10);
 
-// Create the paths
-svg.selectAll("path")
-  .data(data)
-  .join(
-    enter => enter.append("path")
-      .datum(d => {
-        const pathCoordinates = getPathCoordinates(d);
-        // Aggiungi il punto finale uguale al punto iniziale
-        pathCoordinates.push(pathCoordinates[0]);
-        return pathCoordinates;
-      })
-      .attr("d", line)
-      .attr("stroke-width", idleWidth)
-      .attr("stroke", function (d) { return colors(d) })
-      .attr("fill", "none")
-      .attr("stroke-opacity", 1)
-      .attr("opacity", idleOpacity)
-      .on("click", on_click)
-  );
-
-// create a dot for each data point in the path
 svg.selectAll("myCircles")
   .data(data)
   .join(
-    enter => enter.append("g")
-      .attr("class", "circle-group")
-      .attr("fill", function (d) { return colors(d) })
-      .selectAll("circle")
-      .data(d => getPathCoordinates(d))
-      .join(
-        enter => enter.append("circle")
-          .attr("cx", d => d.x)
-          .attr("cy", d => d.y)
-          .attr("r", pointRadius)
-      )
+    enter => {
+      var starGroup = enter.append("g")
+        .attr("id", function (d, i) { return "group" + (i + 1); });
+
+      starGroup.selectAll("path")
+        .data(d => {
+          const pathCoordinates = getPathCoordinates(d);
+          // Add the endpoint equal to the starting point
+          pathCoordinates.push(pathCoordinates[0]);
+          return [pathCoordinates];
+        })
+        .join(enter => enter.append("path")
+          .attr("d", line)
+          .attr("stroke-width", idleWidth)
+          .attr("stroke", function (d) { return colors(d3.select(this.parentNode).attr("id")) })
+          .attr("fill", "none")
+          .attr("stroke-opacity", 1)
+          .attr("opacity", idleOpacity)
+          .on("click", on_click)
+        );
+
+      starGroup.selectAll("circle")
+        .data(d => getPathCoordinates(d))
+        .join(
+          enter => enter.append("circle")
+            .attr("cx", d => d.x)
+            .attr("cy", d => d.y)
+            .attr("fill", function (d) { return colors(d3.select(this.parentNode).attr("id")) })
+            .attr("r", pointRadius)
+        );
+    }
   );
+
 
 // legend - Dots
 svg.selectAll(".mydots")
@@ -228,8 +239,6 @@ svg.selectAll(".mydots")
   .attr("cy", function (d, i) { return 100 + i * 25 }) // 100 is where the first dot appears. 25 is the distance between dots
   .attr("r", 7)
   .style("fill", function (d) { return colors(d) })
-//.attr("id", function (d) { return d });
-
 
 // legend - Labels
 svg.selectAll("mylabels")
