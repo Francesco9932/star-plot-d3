@@ -52,8 +52,14 @@ function on_click(event, d) {
     .attr("stroke-width", idleWidth)
     .attr("opacity", idleOpacity);
 
-  g.selectAll("circle.pathDots")
+  g.selectAll(".pathDots")
     .attr("r", pointRadius);
+
+  g.selectAll(".legendDots")
+    .attr("r", 7);
+
+  g.selectAll(".legendText")
+    .attr("font-size", "18px")
 
   const clickedGroup = d3.select(this.parentNode);
 
@@ -66,10 +72,20 @@ function on_click(event, d) {
     .attr("opacity", 1)
     .attr("stroke-width", idleWidth + 2);
 
-  clickedGroup.selectAll("circle.pathDots")
+  clickedGroup.selectAll(".pathDots")
     .transition()
     .duration(400)
     .attr("r", pointRadius + 4);
+
+  clickedGroup.selectAll(".legendDots")
+    .transition()
+    .duration(400)
+    .attr("r", 7 + 2);
+
+  clickedGroup.selectAll(".legendText")
+    .transition()
+    .duration(400)
+    .attr("font-size", "20px")
 }
 
 // 5: Calculate the coordinates of a point on the circumference of a circle
@@ -220,7 +236,7 @@ svg.selectAll("myPlot")
               .on("click", on_click)
             );
 
-          group.selectAll("circle.pathDots")
+          group.selectAll("pathDots")
             .data(d => {
               let data = {};
               for (let i = 0; i < variables.length; i++) {
@@ -242,20 +258,21 @@ svg.selectAll("myPlot")
 
 
           // legend - Dots
-          group.selectAll(".mydots")
+          group.selectAll("legendDots")
             .data([d.name])
             .enter()
             .append("circle")
             .attr("cx", 100)
             .attr("cy", () => { return 100 + i * 25 }) // 100 is where the first dot appears. 25 is the distance between dots
             .attr("r", 7)
+            .attr("class", "legendDots")
             .style("fill", function (d) { return colors(d) })
             .style("cursor", "pointer")
             .on("click", on_click)
 
 
           // legend - Labels
-          group.selectAll("mylabels")
+          group.selectAll("legendText")
             .data([d.name])
             .enter()
             .append("text")
@@ -266,6 +283,7 @@ svg.selectAll("myPlot")
             .attr("text-anchor", "left")
             .style("alignment-baseline", "middle")
             .style("cursor", "pointer")
+            .attr("class", "legendText")
             .on("click", on_click)
 
         });
