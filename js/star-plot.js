@@ -1,6 +1,5 @@
 import data from '../data.json' assert { type: 'json' };
 
-
 let width = 1200;
 let height = 650;
 let idleOpacity = 0.5;
@@ -8,9 +7,7 @@ let idleWidth = 4;
 let pointRadius = 5;
 
 let names = data.map(d => d.name); // like ["Thor", "IronMan", "Hulk", ...]
-// removing the name from the object
 let variables = Object.keys(data[0]);  // like ["strength", "intelligence", "speed", ...]
-// remove name in the list
 variables.splice(variables.indexOf("name"), 1);
 
 // Accessor functions
@@ -203,8 +200,10 @@ svg.selectAll("myPlot")
 
           group.selectAll("path")
             .data(d => {
-              let data = { strength: d.strength, intelligence: d.intelligence, speed: d.speed, agility: d.agility, endurance: d.endurance };
-              console.log(data);
+              let data = {};
+              for (let i = 0; i < variables.length; i++) {
+                data[variables[i]] = d[variables[i]];
+              }
               const pathCoordinates = getPathCoordinates(data);
               pathCoordinates.push(pathCoordinates[0]);
               return [pathCoordinates];
@@ -217,12 +216,16 @@ svg.selectAll("myPlot")
               .attr("stroke-opacity", 1)
               .attr("opacity", idleOpacity)
               .attr("id", function (d, i) { return "path" + group.attr("id").substring(5); })
+              .style("cursor", "pointer")
               .on("click", on_click)
             );
 
           group.selectAll("circle.pathDots")
             .data(d => {
-              let data = { strength: d.strength, intelligence: d.intelligence, speed: d.speed, agility: d.agility, endurance: d.endurance };
+              let data = {};
+              for (let i = 0; i < variables.length; i++) {
+                data[variables[i]] = d[variables[i]];
+              }
               return getPathCoordinates(data)
             })
             .join(
@@ -233,6 +236,7 @@ svg.selectAll("myPlot")
                 .attr("r", pointRadius)
                 .attr("class", "pathDots")
                 .attr("id", function (d, i) { return "pathCircle" + group.attr("id").substring(5) }) // Unique ID based on group and index
+                .style("cursor", "pointer")
                 .on("click", on_click)
             );
 
@@ -246,6 +250,7 @@ svg.selectAll("myPlot")
             .attr("cy", () => { return 100 + i * 25 }) // 100 is where the first dot appears. 25 is the distance between dots
             .attr("r", 7)
             .style("fill", function (d) { return colors(d) })
+            .style("cursor", "pointer")
             .on("click", on_click)
 
 
@@ -260,6 +265,7 @@ svg.selectAll("myPlot")
             .text(function (d) { return d })
             .attr("text-anchor", "left")
             .style("alignment-baseline", "middle")
+            .style("cursor", "pointer")
             .on("click", on_click)
 
         });
