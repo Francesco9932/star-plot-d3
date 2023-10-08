@@ -1,7 +1,7 @@
 import data from '../data.json' assert { type: 'json' };
 
-let width = 1200;
-let height = 650;
+let width = parseInt(d3.select('#star-plot').style('width'), 10);
+let height = parseInt(d3.select('#star-plot').style('height'), 10);
 let idleOpacity = 0.5;
 let idleWidth = 4;
 let pointRadius = 5;
@@ -95,15 +95,14 @@ function angleToCoordinate(angle, value) {
   return { "x": width / 2 + x, "y": height / 2 - y };
 }
 
-let svg = d3.select("body").append("svg")
-  .attr("width", width)
-  .attr("height", height)
+let svg = d3.select("#star-plot").append("svg")
+  .attr("viewBox", `0 0 ${width} ${height}`)
   .attr("class", "svg-style");
 
 // scale used to map the values to the radius  
 const radialScale = d3.scaleLinear()
   .domain([minStatValue, maxStatValue]) // Set the domain based on the maximum value in the data
-  .range([0, 280]);
+  .range([0, 250]);
 
 let ticks = [];
 let numTicks = 6;
