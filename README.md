@@ -1,2 +1,2 @@
 # Star-plot-d3
-first project for university course called "visualization of information".
+Star-plot visualization tool in D3.js for Marvel character features
